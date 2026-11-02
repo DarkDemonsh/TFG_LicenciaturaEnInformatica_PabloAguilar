@@ -1,17 +1,17 @@
 package prototipo.Entidad;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class Deuda {
     int ID;
     double monto_inicial;
     double couota;
-    LocalDate vencimiento;
+    Date vencimiento;
 
     public Deuda() {
     }
 
-    public Deuda(int ID, double monto_inicial, double couota, LocalDate vencimiento) {
+    public Deuda(int ID, double monto_inicial, double couota, Date vencimiento) {
         this.ID = ID;
         this.monto_inicial = monto_inicial;
         this.couota = couota;
@@ -42,11 +42,11 @@ public class Deuda {
         this.couota = couota;
     }
 
-    public LocalDate getVencimiento() {
+    public Date getVencimiento() {
         return vencimiento;
     }
 
-    public void setVencimiento(LocalDate vencimiento) {
+    public void setVencimiento(Date vencimiento) {
         this.vencimiento = vencimiento;
     }
     

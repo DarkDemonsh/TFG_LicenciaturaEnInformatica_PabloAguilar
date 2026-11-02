@@ -1,11 +1,11 @@
 package prototipo.Entidad;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 public class Ingreso {
     int ID;
     double monto;
-    LocalDate fecha;
+    Date fecha;
     String tipo;
     String Descripcion;
     String Periocidad;
@@ -13,7 +13,7 @@ public class Ingreso {
     public Ingreso() {
     }
 
-    public Ingreso(int ID, double monto, LocalDate fecha, String tipo, String Descripcion, String Periocidad) {
+    public Ingreso(int ID, double monto, Date fecha, String tipo, String Descripcion, String Periocidad) {
         this.ID = ID;
         this.monto = monto;
         this.fecha = fecha;
@@ -38,11 +38,11 @@ public class Ingreso {
         this.monto = monto;
     }
 
-    public LocalDate getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
