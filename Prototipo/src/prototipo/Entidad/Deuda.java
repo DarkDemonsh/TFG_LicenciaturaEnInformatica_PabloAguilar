@@ -5,13 +5,13 @@ import java.sql.Date;
 public class Deuda {
     int ID;
     double monto_inicial;
-    double couota;
+    int couota;
     Date vencimiento;
 
     public Deuda() {
     }
 
-    public Deuda(int ID, double monto_inicial, double couota, Date vencimiento) {
+    public Deuda(int ID, double monto_inicial, int couota, Date vencimiento) {
         this.ID = ID;
         this.monto_inicial = monto_inicial;
         this.couota = couota;
@@ -34,11 +34,11 @@ public class Deuda {
         this.monto_inicial = monto_inicial;
     }
 
-    public double getCouota() {
+    public int getCouota() {
         return couota;
     }
 
-    public void setCouota(double couota) {
+    public void setCouota(int couota) {
         this.couota = couota;
     }
 

@@ -11,9 +11,9 @@ public class p1 extends javax.swing.JFrame {
     Ingreso ingreso = new Ingreso();
     Gasto gasto = new Gasto();
     Guardado save = new Guardado();
-    
-    String ingreso_monto,deuda_monto,gasto_monto,mp,des, tip, per,cat;
-    
+        
+    String ingreso_monto,deuda_monto,gasto_monto,mp,des, tip, per,cat,cuot;
+     
     public p1() {
         initComponents();
     }
@@ -118,7 +118,6 @@ public class p1 extends javax.swing.JFrame {
             }
         });
 
-        cuota.setText("cuota");
         cuota.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cuotaActionPerformed(evt);
@@ -361,7 +360,11 @@ public class p1 extends javax.swing.JFrame {
             ingreso.setTipo(tip);
             /*periocidad*/
             per = Periocidad.getSelectedItem().toString();
-            ingreso.setPeriocidad(per);
+            ingreso.setPeriocidad(per); 
+            
+            save.SQLIngreso(ingreso);   
+            save.Guardado_Local_Ingreso(ingreso);
+            
         }catch(Exception ex){
             System.out.println("Error p1-001 - Añadir_Ingreso "+ex);
         }
@@ -407,6 +410,15 @@ public class p1 extends javax.swing.JFrame {
             long dm = Long.parseLong(deuda_monto);
             deuda.setMonto_inicial(dm);
             /*cuota*/
+            cuot = cuota.getText();
+            int cuotas = Integer.parseInt(cuot);
+            deuda.setCouota(cuotas);
+            
+            if(deuda_box.getVerifyInputWhenFocusTarget()){
+                save.SQLDeuda(deuda);
+                save.Guardado_Local_Deuda(deuda);     
+            }
+            
         }catch(Exception ex){
             System.out.println("Error p1-002 - Añadir Deuda "+ex);
         }
@@ -427,25 +439,18 @@ public class p1 extends javax.swing.JFrame {
             gasto.setCategoria(cat);
             /*descripcion*/
             des = descripcion.getText();
-            gasto.setDescripcion(des);
+            gasto.setDescripcion(des); 
+            
+            save.SQLGasto(gasto);           
+            save.Guardado_Local_Gasto(gasto);
+            
         }catch(Exception ex){
             System.out.println("Error p1-003 - Añadir Gasto "+ex);
         }
     }//GEN-LAST:event_añadir_gastoActionPerformed
 
     private void continuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuarActionPerformed
-        try{
-            
-            save.SQLIngreso(ingreso);
-            save.SQLGasto(gasto);           
-            
-            save.Guardado_Local_Ingreso(ingreso);
-            save.Guardado_Local_Gasto(gasto);
-                       
-            if(deuda_box.getVerifyInputWhenFocusTarget()){
-                save.SQLDeuda(deuda);
-                save.Guardado_Local_Deuda(deuda);     
-            }
+        try{                         
             
         }catch(Exception ex){
             System.out.println("Error p1-004 - Continuar "+ex);
