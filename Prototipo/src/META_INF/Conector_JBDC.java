@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class Conector_JBDC {
         
-    static String url="jdbc:mysql://localhost:3306/siapgpf?useSSL=false";
+    static String url="jdbc:mysql://localhost:3307/siapgpf?useSSL=false";
     static String user="root";
-    static String pass="root";
+    static String pass="";
     
     public static Connection conectar(){
         Connection con = null;

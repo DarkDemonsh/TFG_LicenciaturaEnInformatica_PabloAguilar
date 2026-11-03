@@ -26,15 +26,14 @@ public class Guardado {
 public void SQLIngreso(Ingreso i){
     try{
         
-        String sql = ("INSERT INTO ingresos (ID, Fecha, monto,tipo,descripcion,periocidad) VALUES (?,?,?,?,?,?)");
+        String sql = ("INSERT INTO ingresos (Fecha, monto,tipo,descripcion,periocidad) VALUES (?,?,?,?,?)");
         PreparedStatement ps = conn.prepareStatement(sql);
         
-        ps.setInt(1, i.getID());
-        ps.setDate(2, i.getFecha());
-        ps.setDouble(3, i.getMonto());
-        ps.setString(4, i.getTipo());
-        ps.setString(5, i.getDescripcion());
-        ps.setString(6, i.getPeriocidad());
+        ps.setDate(1, i.getFecha());
+        ps.setDouble(2, i.getMonto());
+        ps.setString(3, i.getTipo());
+        ps.setString(4, i.getDescripcion());
+        ps.setString(5, i.getPeriocidad());
         
         ps.executeUpdate();
         ps.close();
@@ -46,15 +45,14 @@ public void SQLIngreso(Ingreso i){
 public void SQLGasto(Gasto g){
     try{
         
-        String sql = ("INSERT INTO registro_de_gastos (ID, Fecha, monto,categoria,descripcion,medio_de_pago) VALUES (?,?,?,?,?,?)");
+        String sql = ("INSERT INTO registro_de_gastos (Fecha, monto,categoria,descripcion,medio_de_pago) VALUES (?,?,?,?,?)");
         PreparedStatement ps = conn.prepareStatement(sql);
         
-        ps.setInt(1,g.getID());
-        ps.setDate(2, g.getFecha());
-        ps.setDouble(3, g.getMonto());
-        ps.setString(4, g.getCategoria());
-        ps.setString(5, g.getDescripcion());
-        ps.setString(6, g.getMedio_Pago());
+        ps.setDate(1, g.getFecha());
+        ps.setDouble(2, g.getMonto());
+        ps.setString(3, g.getCategoria());
+        ps.setString(4, g.getDescripcion());
+        ps.setString(5, g.getMedio_Pago());
         
         ps.executeUpdate();
         ps.close();
@@ -66,13 +64,12 @@ public void SQLGasto(Gasto g){
 public void SQLDeuda(Deuda d){
     try{
         
-        String sql = ("INSERT INTO deuda (ID, monto_inicial,cuota,vencimiento) VALUES (?,?,?,?)");
+        String sql = ("INSERT INTO deuda (monto_inicial,cuota,vencimiento) VALUES (?,?,?)");
         PreparedStatement ps = conn.prepareStatement(sql);
         
-        ps.setInt(1, d.getID());
-        ps.setDouble(2, d.getMonto_inicial());
-        ps.setInt(3, d.getCouota());
-        ps.setDate(4, d.getVencimiento());
+        ps.setDouble(1, d.getMonto_inicial());
+        ps.setInt(2, d.getCouota());
+        ps.setDate(3, d.getVencimiento());
         
         ps.executeUpdate();
         ps.close();
@@ -214,4 +211,27 @@ public void Guardado_Local_Deuda(Deuda d){
             System.out.println("Error en al guardar el JSON");
             System.out.println("Error s1-004 - Local Deuda "+ex);
         }
-}}
+}
+
+public void SQLResumen(Analisis_Gastos ag){
+    try{
+        
+        String sql = ("INSERT INTO analisis_de_gastos (Ingresos,Gastos,Balance,Ahorro,Gasto_Promedio,Variacion_Mensual) VALUES (?,?,?,?,?,?)");
+        PreparedStatement ps = conn.prepareStatement(sql);
+        
+        ps.setDouble(1, ag.calcularTotalIngresos());
+        ps.setDouble(2, ag.calcularTotalGastos());
+        ps.setDouble(3, ag.calcularBalance());
+        ps.setDouble(4, ag.calcularPorcentajeAhorro());
+        ps.setDouble(5, ag.calcularGastoPromedio());
+        ps.setDouble(6, ag.calcularVariacionMensual());
+        
+        ps.executeUpdate();
+        ps.close();
+        
+    }catch(Exception ex){
+        System.out.println("Error s1-003 - SQL Deuda "+ex);
+    }
+}
+
+}

@@ -1,8 +1,8 @@
 package prototipo.panel;
 
-public class p2 extends javax.swing.JFrame {
+public class Pantalla_Historial extends javax.swing.JFrame {
 
-    public p2() {
+    public Pantalla_Historial() {
         initComponents();
     }
   @SuppressWarnings("unchecked")

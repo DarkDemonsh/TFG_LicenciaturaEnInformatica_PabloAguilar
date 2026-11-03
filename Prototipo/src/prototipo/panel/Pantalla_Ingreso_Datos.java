@@ -1,11 +1,12 @@
 package prototipo.panel;
 
+import java.sql.Date;
 import prototipo.Entidad.Deuda;
 import prototipo.Entidad.Gasto;
 import prototipo.Entidad.Ingreso;
 import prototipo.Servicio.Guardado;
 
-public class p1 extends javax.swing.JFrame {
+public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
     
     Deuda deuda = new Deuda();
     Ingreso ingreso = new Ingreso();
@@ -13,8 +14,10 @@ public class p1 extends javax.swing.JFrame {
     Guardado save = new Guardado();
         
     String ingreso_monto,deuda_monto,gasto_monto,mp,des, tip, per,cat,cuot;
+    Date fecha;
+    java.util.Date dfecha;
      
-    public p1() {
+    public Pantalla_Ingreso_Datos() {
         initComponents();
     }
     @SuppressWarnings("unchecked")
@@ -361,6 +364,10 @@ public class p1 extends javax.swing.JFrame {
             /*periocidad*/
             per = Periocidad.getSelectedItem().toString();
             ingreso.setPeriocidad(per); 
+            /*fecha*/
+            dfecha = Fecha_Ingreso.getDate();
+            fecha = new java.sql.Date(dfecha.getTime());
+            ingreso.setFecha(fecha);
             
             save.SQLIngreso(ingreso);   
             save.Guardado_Local_Ingreso(ingreso);
@@ -413,6 +420,10 @@ public class p1 extends javax.swing.JFrame {
             cuot = cuota.getText();
             int cuotas = Integer.parseInt(cuot);
             deuda.setCouota(cuotas);
+            /*fecha*/
+            dfecha = fecha_deuda.getDate();
+            fecha = new java.sql.Date(dfecha.getTime());
+            deuda.setVencimiento(fecha);
             
             if(deuda_box.getVerifyInputWhenFocusTarget()){
                 save.SQLDeuda(deuda);
@@ -440,6 +451,9 @@ public class p1 extends javax.swing.JFrame {
             /*descripcion*/
             des = descripcion.getText();
             gasto.setDescripcion(des); 
+            dfecha = fecha_gasto.getDate();
+            fecha = new java.sql.Date(dfecha.getTime());
+            gasto.setFecha(fecha);
             
             save.SQLGasto(gasto);           
             save.Guardado_Local_Gasto(gasto);
