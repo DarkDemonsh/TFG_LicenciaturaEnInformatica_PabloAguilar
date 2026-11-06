@@ -3,6 +3,7 @@ package prototipo.Entidad;
 import java.sql.Date;
 
 public class Deuda {
+
     int ID;
     double monto_inicial;
     int couota;
@@ -16,8 +17,8 @@ public class Deuda {
         this.monto_inicial = monto_inicial;
         this.couota = couota;
         this.vencimiento = vencimiento;
-    } 
-    
+    }
+
     public int getID() {
         return ID;
     }
@@ -49,5 +50,5 @@ public class Deuda {
     public void setVencimiento(Date vencimiento) {
         this.vencimiento = vencimiento;
     }
-    
+
 }

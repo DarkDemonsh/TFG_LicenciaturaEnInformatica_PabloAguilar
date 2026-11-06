@@ -3,6 +3,7 @@ package prototipo.Entidad;
 import java.sql.Date;
 
 public class Gasto {
+
     int ID;
     double monto;
     Date fecha;
@@ -21,7 +22,7 @@ public class Gasto {
         this.Medio_Pago = Medio_Pago;
         this.Descripcion = Descripcion;
     }
-    
+
     public int getID() {
         return ID;
     }

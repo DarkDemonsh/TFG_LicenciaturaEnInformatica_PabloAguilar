@@ -5,24 +5,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import javax.swing.table.DefaultTableModel;
 import prototipo.Entidad.Deuda;
 import prototipo.Entidad.Gasto;
 import prototipo.Entidad.Ingreso;
-import prototipo.Servicio.Analisis_Gastos;
-import prototipo.Servicio.Guardado;
-import prototipo.Servicio.Obtener_Listas;
+
+import java.time.YearMonth;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import prototipo.Servicio.Controlador;
 
 public class Pantalla_Muestra extends javax.swing.JFrame {
 
+    private Controlador controlador = new Controlador();
+
     public Pantalla_Muestra() {
         initComponents();
-        
+
         Deuda deuda = new Deuda();
         Ingreso ingreso = new Ingreso();
-        Gasto gasto = new Gasto();    
-        
+        Gasto gasto = new Gasto();
+
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -116,51 +120,171 @@ public class Pantalla_Muestra extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
-        // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_SalirActionPerformed
 
     private void CargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarActionPerformed
-        Analisis_Gastos ag = new Analisis_Gastos();
-        Obtener_Listas olist = new Obtener_Listas();
-        Guardado save = new Guardado();
-        
-        try{
-        save.SQLResumen(ag);
-        }catch(Exception ex){
-            System.out.println("Error pm-002 "+ex);
+        try {
+
+            StringBuilder informe = new StringBuilder();
+
+            informe.append(
+                    controlador.obtenerResumenFinanciero()
+            );
+
+            informe.append("\n\n");
+
+            boolean entrenado = controlador.entrenarModelo();
+
+            if (entrenado) {
+
+                informe.append(
+                        "===== MODELO SOM =====\n\n"
+                );
+
+                informe.append(
+                        controlador.evaluarModelo()
+                );
+
+                informe.append("\n");
+
+                informe.append(
+                        controlador.obtenerPerfilesFinancieros()
+                );
+
+                YearMonth periodo
+                        = controlador.obtenerUltimoPeriodo();
+
+                if (periodo != null) {
+
+                    informe.append("\n===== ANÁLISIS DEL ÚLTIMO MES =====\n\n");
+
+                    informe.append(
+                            controlador.analizarMes(periodo)
+                    );
+
+                    informe.append("\n===== RECOMENDACIONES =====\n\n");
+
+                    informe.append(
+                            controlador.obtenerRecomendaciones(periodo)
+                    );
+
+                }
+
+            } else {
+
+                informe.append(
+                        "\nNo hay suficientes datos históricos "
+                        + "para entrenar el modelo SOM."
+                );
+            }
+
+            try {
+
+                double ingresos
+                        = controlador.proyectarIngresos(3);
+
+                double gastos
+                        = controlador.proyectarGastos(3);
+
+                informe.append("\n\n===== PROYECCIÓN FINANCIERA =====\n\n");
+
+                informe.append(
+                        String.format(
+                                "Ingresos estimados: $%.2f%n",
+                                ingresos
+                        )
+                );
+
+                informe.append(
+                        String.format(
+                                "Gastos estimados: $%.2f%n",
+                                gastos
+                        )
+                );
+
+                informe.append(
+                        String.format(
+                                "Balance estimado: $%.2f%n",
+                                ingresos - gastos
+                        )
+                );
+
+            } catch (IllegalArgumentException ex) {
+
+                informe.append(
+                        "\nNo fue posible realizar la proyección: "
+                        + ex.getMessage()
+                );
+            }
+
+            jTextArea1.setText(informe.toString());
+
+            jTextArea1.setCaretPosition(0);
+
+            DefaultTableModel modelo
+                    = (DefaultTableModel) tabla.getModel();
+
+            modelo.setRowCount(0);
+
+            modelo.addRow(new Object[]{
+                String.format(
+                "%.2f",
+                controlador.obtenerTotalIngresos()
+                ),
+                String.format(
+                "%.2f",
+                controlador.obtenerTotalGastos()
+                ),
+                "Ver informe",
+                "Ver informe",
+                "Ver informe",
+                "Ver informe"
+            });
+
+        } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al cargar los resultados:\n"
+                    + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            ex.printStackTrace();
         }
-        
     }//GEN-LAST:event_CargarActionPerformed
-    
-    private void cargarTabla(){
+
+    private void cargarTabla() {
         DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
         modelo.setNumRows(0);
-        
+
         PreparedStatement ps;
         ResultSet rs;
         ResultSetMetaData rsmd;
         int columna = 0;
-        
-        try{
-        
-        Connection con = Conector_JBDC.conectar();
-        ps = con.prepareStatement("SELECT Ingresos, Gastos, Balnce, Ahorro, Gasto_Promedio, Variacion_Mensual FROM analisis_de_gastos");
-        rs = ps.executeQuery();
-        rsmd = rs.getMetaData();
-        columna = rsmd.getColumnCount();
-        
-        while(rs.next()){
-            
-            Object [] fila = new Object [columna];
-            
-            for (int i = 0; i < columna; i++) {
-                fila[i] = rs.getObject(i+1);
+
+        try {
+
+            Connection con = Conector_JBDC.conectar();
+            ps = con.prepareStatement("SELECT Ingresos, Gastos, Balnce, Ahorro, Gasto_Promedio, Variacion_Mensual FROM analisis_de_gastos");
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
+            columna = rsmd.getColumnCount();
+
+            while (rs.next()) {
+
+                Object[] fila = new Object[columna];
+
+                for (int i = 0; i < columna; i++) {
+                    fila[i] = rs.getObject(i + 1);
+                }
+                modelo.addRow(fila);
             }
-            modelo.addRow(fila);
-        }
-        
-        }catch(Exception ex){
-            System.out.println("Error pm-001 "+ex);
+
+        } catch (Exception ex) {
+            System.out.println("Error pm-001 " + ex);
         }
     }
 

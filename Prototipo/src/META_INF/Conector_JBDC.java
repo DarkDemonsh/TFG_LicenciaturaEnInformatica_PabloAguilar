@@ -5,20 +5,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conector_JBDC {
-        
-    static String url="jdbc:mysql://localhost:3307/siapgpf?useSSL=false";
-    static String user="root";
-    static String pass="";
-    
-    public static Connection conectar(){
+
+    static String url = "jdbc:mysql://localhost:3307/siapgpf?useSSL=false";
+    static String user = "root";
+    static String pass = "";
+
+    public static Connection conectar() {
         Connection con = null;
-        try{
-            con=DriverManager.getConnection(url, user, pass);
+        try {
+            con = DriverManager.getConnection(url, user, pass);
             //System.out.println("Conectado");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return con;
     }
-    
+
 }

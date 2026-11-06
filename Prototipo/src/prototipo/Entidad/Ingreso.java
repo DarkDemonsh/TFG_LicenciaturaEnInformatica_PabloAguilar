@@ -3,6 +3,7 @@ package prototipo.Entidad;
 import java.sql.Date;
 
 public class Ingreso {
+
     int ID;
     double monto;
     Date fecha;
@@ -21,7 +22,7 @@ public class Ingreso {
         this.Descripcion = Descripcion;
         this.Periocidad = Periocidad;
     }
-    
+
     public int getID() {
         return ID;
     }
@@ -69,5 +70,5 @@ public class Ingreso {
     public void setPeriocidad(String Periocidad) {
         this.Periocidad = Periocidad;
     }
-   
+
 }

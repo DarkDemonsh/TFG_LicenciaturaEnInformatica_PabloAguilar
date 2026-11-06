@@ -11,10 +11,11 @@ import prototipo.Entidad.Gasto;
 import prototipo.Entidad.Ingreso;
 
 public class Obtener_Listas {
+
     Deuda deuda = new Deuda();
     Ingreso ingreso = new Ingreso();
     Gasto gasto = new Gasto();
-    
+
     Connection conn = Conector_JBDC.conectar();
 
     public List<Ingreso> obtenerIngresos() {
@@ -25,10 +26,12 @@ public class Obtener_Listas {
 
         try (Connection conn = Conector_JBDC.conectar()) {
 
-            if (conn == null) return ingresos;
+            if (conn == null) {
+                return ingresos;
+            }
 
             try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
+                    ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
 
@@ -52,6 +55,7 @@ public class Obtener_Listas {
 
         return ingresos;
     }
+
     public List<Gasto> obtenerGastos() {
 
         List<Gasto> gastos = new ArrayList<>();
@@ -60,10 +64,12 @@ public class Obtener_Listas {
 
         try (Connection conn = Conector_JBDC.conectar()) {
 
-            if (conn == null) return gastos;
+            if (conn == null) {
+                return gastos;
+            }
 
             try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
+                    ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
 
@@ -87,6 +93,7 @@ public class Obtener_Listas {
 
         return gastos;
     }
+
     public List<Deuda> obtenerDeudas() {
 
         List<Deuda> deudas = new ArrayList<>();
@@ -95,10 +102,12 @@ public class Obtener_Listas {
 
         try (Connection conn = Conector_JBDC.conectar()) {
 
-            if (conn == null) return deudas;
+            if (conn == null) {
+                return deudas;
+            }
 
             try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
+                    ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
 
@@ -120,8 +129,5 @@ public class Obtener_Listas {
 
         return deudas;
     }
-    
-    
-    
-}
 
+}

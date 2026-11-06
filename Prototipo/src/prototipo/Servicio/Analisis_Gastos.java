@@ -13,13 +13,13 @@ import prototipo.Entidad.Gasto;
 import prototipo.Entidad.Ingreso;
 
 public class Analisis_Gastos {
-    
+
     Deuda deuda = new Deuda();
     Ingreso ingreso = new Ingreso();
     Gasto gasto = new Gasto();
-    
+
     Connection conn = Conector_JBDC.conectar();
-    
+
     private Obtener_Listas gestor = new Obtener_Listas();
 
     public double calcularTotalIngresos() {
@@ -34,6 +34,7 @@ public class Analisis_Gastos {
 
         return total;
     }
+
     public double calcularTotalGastos() {
 
         List<Gasto> gastos = gestor.obtenerGastos();
@@ -46,6 +47,7 @@ public class Analisis_Gastos {
 
         return total;
     }
+
     public double calcularBalance() {
 
         double ingresos = calcularTotalIngresos();
@@ -53,6 +55,7 @@ public class Analisis_Gastos {
 
         return ingresos - gastos;
     }
+
     public double calcularPorcentajeAhorro() {
 
         double ingresos = calcularTotalIngresos();
@@ -64,6 +67,7 @@ public class Analisis_Gastos {
 
         return (balance / ingresos) * 100;
     }
+
     public double calcularGastoPromedio() {
 
         List<Gasto> gastos = gestor.obtenerGastos();
@@ -80,6 +84,7 @@ public class Analisis_Gastos {
 
         return total / gastos.size();
     }
+
     public Map<String, Double> obtenerGastosPorCategoria() {
 
         List<Gasto> gastos = gestor.obtenerGastos();
@@ -93,13 +98,14 @@ public class Analisis_Gastos {
             double monto = g.getMonto();
 
             resultado.put(
-                categoria,
-                resultado.getOrDefault(categoria, 0.0) + monto
+                    categoria,
+                    resultado.getOrDefault(categoria, 0.0) + monto
             );
         }
 
         return resultado;
     }
+
     public Map<String, Double> obtenerGastosPorMedioPago() {
 
         List<Gasto> gastos = gestor.obtenerGastos();
@@ -113,13 +119,14 @@ public class Analisis_Gastos {
             double monto = g.getMonto();
 
             resultado.put(
-                medio,
-                resultado.getOrDefault(medio, 0.0) + monto
+                    medio,
+                    resultado.getOrDefault(medio, 0.0) + monto
             );
         }
 
         return resultado;
     }
+
     public Map<YearMonth, Double> obtenerGastosPorMes() {
 
         List<Gasto> gastos = gestor.obtenerGastos();
@@ -137,13 +144,14 @@ public class Analisis_Gastos {
             YearMonth mes = YearMonth.from(fecha);
 
             resultado.put(
-                mes,
-                resultado.getOrDefault(mes, 0.0) + g.getMonto()
+                    mes,
+                    resultado.getOrDefault(mes, 0.0) + g.getMonto()
             );
         }
 
         return resultado;
     }
+
     public double calcularVariacionMensual() {
 
         Map<YearMonth, Double> gastos = obtenerGastosPorMes();
@@ -164,5 +172,5 @@ public class Analisis_Gastos {
 
         return ((mesActual - mesAnterior) / mesAnterior) * 100;
     }
-    
+
 }

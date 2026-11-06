@@ -117,7 +117,6 @@
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="continuar" min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="jScrollPane1" pref="166" max="32767" attributes="0"/>
                                       <Component id="monto_gasto" alignment="0" pref="166" max="32767" attributes="0"/>
@@ -128,6 +127,10 @@
                                       <Component id="categoria" alignment="0" pref="166" max="32767" attributes="0"/>
                                       <Component id="medio_pago" alignment="0" pref="166" max="32767" attributes="0"/>
                                       <Component id="fecha_gasto" alignment="0" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="Salir" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="continuar" alignment="1" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -193,6 +196,8 @@
                       <Component id="añadir_gasto" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
                       <Component id="continuar" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="Salir" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -466,6 +471,14 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Monto"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="Salir">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Salir"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SalirActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

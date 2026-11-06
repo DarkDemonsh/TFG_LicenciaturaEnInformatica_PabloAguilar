@@ -7,19 +7,20 @@ import prototipo.Entidad.Ingreso;
 import prototipo.Servicio.Guardado;
 
 public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
-    
+
     Deuda deuda = new Deuda();
     Ingreso ingreso = new Ingreso();
     Gasto gasto = new Gasto();
     Guardado save = new Guardado();
-        
-    String ingreso_monto,deuda_monto,gasto_monto,mp,des, tip, per,cat,cuot;
+
+    String ingreso_monto, deuda_monto, gasto_monto, mp, des, tip, per, cat, cuot;
     Date fecha;
     java.util.Date dfecha;
-     
+
     public Pantalla_Ingreso_Datos() {
         initComponents();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -61,6 +62,7 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        Salir = new javax.swing.JButton();
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -190,6 +192,13 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
 
         jLabel12.setText("Monto");
 
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -246,7 +255,6 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(32, 32, 32)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(continuar)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                                         .addComponent(monto_gasto, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
@@ -255,7 +263,10 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
                                             .addComponent(jLabel2))
                                         .addComponent(categoria, 0, 166, Short.MAX_VALUE)
                                         .addComponent(medio_pago, 0, 166, Short.MAX_VALUE)
-                                        .addComponent(fecha_gasto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                        .addComponent(fecha_gasto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(Salir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(continuar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel5)))
@@ -305,7 +316,9 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(añadir_gasto)
                         .addGap(63, 63, 63)
-                        .addComponent(continuar))
+                        .addComponent(continuar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Salir))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(9, 9, 9)
@@ -352,8 +365,8 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void añadir_ingresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_ingresoActionPerformed
-        try{
- //Ingreso
+        try {
+            //Ingreso
             /*monto*/
             ingreso_monto = monto_ingreso.getText();
             long mi = Long.parseLong(ingreso_monto);
@@ -363,22 +376,22 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
             ingreso.setTipo(tip);
             /*periocidad*/
             per = Periocidad.getSelectedItem().toString();
-            ingreso.setPeriocidad(per); 
+            ingreso.setPeriocidad(per);
             /*fecha*/
             dfecha = Fecha_Ingreso.getDate();
             fecha = new java.sql.Date(dfecha.getTime());
             ingreso.setFecha(fecha);
-            
-            save.SQLIngreso(ingreso);   
+
+            save.SQLIngreso(ingreso);
             save.Guardado_Local_Ingreso(ingreso);
-            
-        }catch(Exception ex){
-            System.out.println("Error p1-001 - Añadir_Ingreso "+ex);
+
+        } catch (Exception ex) {
+            System.out.println("Error p1-001 - Añadir_Ingreso " + ex);
         }
     }//GEN-LAST:event_añadir_ingresoActionPerformed
 
     private void monto_ingresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_monto_ingresoActionPerformed
-   
+
     }//GEN-LAST:event_monto_ingresoActionPerformed
 
     private void tipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoActionPerformed
@@ -410,7 +423,7 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
     }//GEN-LAST:event_categoriaActionPerformed
 
     private void añadir_deudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_deudaActionPerformed
-        try{
+        try {
 //Deuda
             /*monto*/
             deuda_monto = monto_inicial.getText();
@@ -424,19 +437,19 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
             dfecha = fecha_deuda.getDate();
             fecha = new java.sql.Date(dfecha.getTime());
             deuda.setVencimiento(fecha);
-            
-            if(deuda_box.getVerifyInputWhenFocusTarget()){
+
+            if(deuda_box.isSelected()) {
                 save.SQLDeuda(deuda);
-                save.Guardado_Local_Deuda(deuda);     
+                save.Guardado_Local_Deuda(deuda);
             }
-            
-        }catch(Exception ex){
-            System.out.println("Error p1-002 - Añadir Deuda "+ex);
+
+        } catch (Exception ex) {
+            System.out.println("Error p1-002 - Añadir Deuda " + ex);
         }
     }//GEN-LAST:event_añadir_deudaActionPerformed
 
     private void añadir_gastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_añadir_gastoActionPerformed
-        try{
+        try {
 //Gasto
             /*monto*/
             gasto_monto = monto_gasto.getText();
@@ -450,24 +463,29 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
             gasto.setCategoria(cat);
             /*descripcion*/
             des = descripcion.getText();
-            gasto.setDescripcion(des); 
+            gasto.setDescripcion(des);
             dfecha = fecha_gasto.getDate();
             fecha = new java.sql.Date(dfecha.getTime());
             gasto.setFecha(fecha);
-            
-            save.SQLGasto(gasto);           
+
+            save.SQLGasto(gasto);
             save.Guardado_Local_Gasto(gasto);
-            
-        }catch(Exception ex){
-            System.out.println("Error p1-003 - Añadir Gasto "+ex);
+
+        } catch (Exception ex) {
+            System.out.println("Error p1-003 - Añadir Gasto " + ex);
         }
     }//GEN-LAST:event_añadir_gastoActionPerformed
 
     private void continuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_continuarActionPerformed
-        try{                         
-            
-        }catch(Exception ex){
-            System.out.println("Error p1-004 - Continuar "+ex);
+        try {
+            Pantalla_Muestra pantalla = new Pantalla_Muestra();
+
+            pantalla.setLocationRelativeTo(null);
+            pantalla.setVisible(true);
+
+            this.dispose();
+        } catch (Exception ex) {
+            System.out.println("Error p1-004 - Continuar " + ex);
         }
     }//GEN-LAST:event_continuarActionPerformed
 
@@ -475,9 +493,14 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
 
     }//GEN-LAST:event_deuda_boxActionPerformed
 
+    private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
+        dispose();
+    }//GEN-LAST:event_SalirActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toedter.calendar.JDateChooser Fecha_Ingreso;
     private javax.swing.JComboBox Periocidad;
+    private javax.swing.JButton Salir;
     private javax.swing.JButton añadir_deuda;
     private javax.swing.JButton añadir_gasto;
     private javax.swing.JButton añadir_ingreso;
