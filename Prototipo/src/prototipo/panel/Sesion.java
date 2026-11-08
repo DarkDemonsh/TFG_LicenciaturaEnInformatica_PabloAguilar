@@ -1,5 +1,11 @@
 package prototipo.panel;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Random;
+import javax.swing.JOptionPane;
+
 public class Sesion extends javax.swing.JFrame {
 
     public Sesion() {
@@ -128,14 +134,89 @@ public class Sesion extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniciarActionPerformed
-        Menu pantalla = new Menu();
+        String usuario = Usuario.getText().trim();
+        String password = new String(pass.getPassword());
 
-            pantalla.setLocationRelativeTo(null);
-            pantalla.setVisible(true);
+        if (usuario.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (Connection conn = META_INF.Conector_JBDC.conectar()) {
+            String sql = "SELECT contraseña, TagSesion FROM usuarios WHERE usuario = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, usuario);
+            ResultSet rs = ps.executeQuery();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "El usuario no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String passEncriptadaBD = rs.getString("contraseña");
+            int tagUsuario = rs.getInt("TagSesion");
+            String passwordIngresadaEncriptada = prototipo.Servicio.Cifrado.encriptar(password);
+
+            if (passEncriptadaBD.equals(passwordIngresadaEncriptada)) {
+
+                prototipo.Servicio.SesionActual.setTagSesion(tagUsuario);
+                prototipo.Servicio.SesionActual.setUsuario(usuario);
+
+                JOptionPane.showMessageDialog(this, "¡Bienvenido, " + usuario + "!");
+                Menu pantalla = new Menu();
+                pantalla.setLocationRelativeTo(null);
+                pantalla.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al iniciar sesión: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_iniciarActionPerformed
 
     private void RegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RegistrarseActionPerformed
-        // TODO add your handling code here:
+        String usuario = Usuario.getText().trim();
+        String password = new String(pass.getPassword());
+
+        if (usuario.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar usuario y contraseña para registrarse.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (Connection conn = META_INF.Conector_JBDC.conectar()) {
+            String sqlCheck = "SELECT COUNT(*) FROM usuarios WHERE usuario = ?";
+            PreparedStatement psCheck = conn.prepareStatement(sqlCheck);
+            psCheck.setString(1, usuario);
+            ResultSet rsCheck = psCheck.executeQuery();
+
+            if (rsCheck.next() && rsCheck.getInt(1) > 0) {
+                JOptionPane.showMessageDialog(this, "El nombre de usuario ya está registrado. Elija otro.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                psCheck.close();
+                return;
+            }
+            psCheck.close();
+
+            String passwordEncriptada = prototipo.Servicio.Cifrado.encriptar(password);
+
+            Random rand = new Random();
+            int tagSesionAleatorio = 10000 + rand.nextInt(90000);
+
+            String sqlInsert = "INSERT INTO usuarios (Usuario, Contraseña, TagSesion) VALUES (?, ?, ?)";
+            PreparedStatement psInsert = conn.prepareStatement(sqlInsert);
+            psInsert.setString(1, usuario);
+            psInsert.setString(2, passwordEncriptada);
+            psInsert.setInt(3, tagSesionAleatorio);
+            psInsert.executeUpdate();
+            psInsert.close();
+
+            JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.");
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al registrar el usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_RegistrarseActionPerformed
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed

@@ -22,35 +22,28 @@ public class Obtener_Listas {
 
         List<Ingreso> ingresos = new ArrayList<>();
 
-        String sql = "SELECT * FROM ingresos";
-
+        String sql = "SELECT * FROM ingresos WHERE TagSesion = ?";
         try (Connection conn = Conector_JBDC.conectar()) {
-
             if (conn == null) {
                 return ingresos;
             }
-
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                    ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-
-                    Ingreso ingreso = new Ingreso();
-
-                    ingreso.setID(rs.getInt("ID"));
-                    ingreso.setFecha(rs.getDate("Fecha"));
-                    ingreso.setMonto(rs.getDouble("monto"));
-                    ingreso.setTipo(rs.getString("tipo"));
-                    ingreso.setDescripcion(rs.getString("descripcion"));
-                    ingreso.setPeriocidad(rs.getString("periocidad"));
-
-                    ingresos.add(ingreso);
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, SesionActual.getTagSesion());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Ingreso ingreso = new Ingreso();
+                        ingreso.setID(rs.getInt("ID"));
+                        ingreso.setFecha(rs.getDate("Fecha"));
+                        ingreso.setMonto(rs.getDouble("monto"));
+                        ingreso.setTipo(rs.getString("tipo"));
+                        ingreso.setDescripcion(rs.getString("descripcion"));
+                        ingreso.setPeriocidad(rs.getString("periocidad"));
+                        ingresos.add(ingreso);
+                    }
                 }
             }
-
         } catch (Exception ex) {
-            System.out.println("Error al obtener ingresos: "
-                    + ex.getMessage());
+            System.out.println("Error al obtener ingresos: " + ex.getMessage());
         }
 
         return ingresos;
@@ -60,35 +53,28 @@ public class Obtener_Listas {
 
         List<Gasto> gastos = new ArrayList<>();
 
-        String sql = "SELECT * FROM registro_de_gastos";
-
+        String sql = "SELECT * FROM registro_de_gastos WHERE TagSesion = ?";
         try (Connection conn = Conector_JBDC.conectar()) {
-
             if (conn == null) {
                 return gastos;
             }
-
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                    ResultSet rs = ps.executeQuery()) {
-
-                while (rs.next()) {
-
-                    Gasto gasto = new Gasto();
-
-                    gasto.setID(rs.getInt("ID"));
-                    gasto.setFecha(rs.getDate("Fecha"));
-                    gasto.setMonto(rs.getDouble("monto"));
-                    gasto.setCategoria(rs.getString("categoria"));
-                    gasto.setDescripcion(rs.getString("descripcion"));
-                    gasto.setMedio_Pago(rs.getString("medio_de_pago"));
-
-                    gastos.add(gasto);
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, SesionActual.getTagSesion());
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Gasto gasto = new Gasto();
+                        gasto.setID(rs.getInt("ID"));
+                        gasto.setFecha(rs.getDate("Fecha"));
+                        gasto.setMonto(rs.getDouble("monto"));
+                        gasto.setCategoria(rs.getString("categoria"));
+                        gasto.setDescripcion(rs.getString("descripcion"));
+                        gasto.setMedio_Pago(rs.getString("medio_de_pago"));
+                        gastos.add(gasto);
+                    }
                 }
             }
-
         } catch (Exception ex) {
-            System.out.println("Error al obtener gastos: "
-                    + ex.getMessage());
+            System.out.println("Error al obtener gastos: " + ex.getMessage());
         }
 
         return gastos;
@@ -98,7 +84,7 @@ public class Obtener_Listas {
 
         List<Deuda> deudas = new ArrayList<>();
 
-        String sql = "SELECT * FROM deuda";
+        String sql = "SELECT * FROM deuda WHERE TagSesion = ?";
 
         try (Connection conn = Conector_JBDC.conectar()) {
 

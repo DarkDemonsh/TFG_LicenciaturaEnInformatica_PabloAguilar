@@ -1,9 +1,41 @@
 package prototipo.panel;
 
+import META_INF.Conector_JBDC;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class Pantalla_Historial extends javax.swing.JFrame {
 
     public Pantalla_Historial() {
         initComponents();
+        cargarFechasEnLista();
+    }
+
+    private void cargarFechasEnLista() {
+        DefaultListModel<String> modeloLista = new DefaultListModel<>();
+        jList2.setModel(modeloLista);
+
+        String sql = "SELECT DISTINCT AnioMes FROM (" + "  SELECT DATE_FORMAT(Fecha, '%Y-%m') AS AnioMes FROM ingresos " + "  UNION "
+                + "  SELECT DATE_FORMAT(Fecha, '%Y-%m') AS AnioMes FROM registro_de_gastos " + "  UNION " + "  SELECT DATE_FORMAT(vencimiento, '%Y-%m') AS AnioMes FROM deuda"
+                + ") AS meses_unificados " + "WHERE AnioMes IS NOT NULL " + "ORDER BY AnioMes DESC";
+
+        try (Connection con = Conector_JBDC.conectar();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String anioMes = rs.getString("AnioMes");
+                if (anioMes != null && !anioMes.isEmpty()) {
+                    modeloLista.addElement(anioMes);
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Error al cargar historial en lista: " + ex.getMessage());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -87,8 +119,8 @@ public class Pantalla_Historial extends javax.swing.JFrame {
                     .addComponent(Buscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(Salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,7 +144,56 @@ public class Pantalla_Historial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuscarActionPerformed
-        // TODO add your handling code here:
+        String mesSeleccionado = (String) jList2.getSelectedValue();
+
+        if (mesSeleccionado == null || mesSeleccionado.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor seleccione un mes de la lista.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try (Connection con = Conector_JBDC.conectar()) {
+            double totalIngresos = 0;
+            double totalGastos = 0;
+            double totalDeudas = 0;
+
+            PreparedStatement psIng = con.prepareStatement("SELECT SUM(monto) FROM ingresos WHERE DATE_FORMAT(fecha, '%Y-%m') = ?");
+            psIng.setString(1, mesSeleccionado);
+            ResultSet rsIng = psIng.executeQuery();
+            if (rsIng.next()) {
+                totalIngresos = rsIng.getDouble(1);
+            }
+
+            PreparedStatement psGas = con.prepareStatement("SELECT SUM(monto) FROM registro_de_gastos WHERE DATE_FORMAT(Fecha, '%Y-%m') = ?");
+            psGas.setString(1, mesSeleccionado);
+            ResultSet rsGas = psGas.executeQuery();
+            if (rsGas.next()) {
+                totalGastos = rsGas.getDouble(1);
+            }
+
+            PreparedStatement psDeu = con.prepareStatement("SELECT SUM(monto_inicial) FROM deuda WHERE DATE_FORMAT(vencimiento, '%Y-%m') = ?");
+            psDeu.setString(1, mesSeleccionado);
+            ResultSet rsDeu = psDeu.executeQuery();
+            if (rsDeu.next()) {
+                totalDeudas = rsDeu.getDouble(1);
+            }
+
+            String recomendacion = (totalIngresos >= totalGastos)
+                    ? "Buen balance general en este período mensual."
+                    : "Atención: Los gastos mensuales superaron a los ingresos.";
+
+            DefaultTableModel modeloTabla = (DefaultTableModel) jTable2.getModel();
+            modeloTabla.setRowCount(0);
+            modeloTabla.addRow(new Object[]{
+                String.format("$%.2f", totalIngresos),
+                String.format("$%.2f", totalGastos),
+                recomendacion,
+                String.format("$%.2f", totalDeudas)
+            });
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al consultar los datos del historial mensual: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_BuscarActionPerformed
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed

@@ -5,25 +5,54 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import prototipo.Entidad.Deuda;
-import prototipo.Entidad.Gasto;
-import prototipo.Entidad.Ingreso;
 
 import java.time.YearMonth;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import prototipo.Servicio.Analisis_Gastos;
 import prototipo.Servicio.Controlador;
+import prototipo.Servicio.Guardado;
 
 public class Pantalla_Muestra extends javax.swing.JFrame {
 
     private Controlador controlador = new Controlador();
+    private Analisis_Gastos analisisGastos;
 
     public Pantalla_Muestra() {
         initComponents();
 
-        Deuda deuda = new Deuda();
-        Ingreso ingreso = new Ingreso();
-        Gasto gasto = new Gasto();
+        setLocationRelativeTo(null);
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setWrapStyleWord(true);
+
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int fila = tabla.rowAtPoint(evt.getPoint());
+                int columna = tabla.columnAtPoint(evt.getPoint());
+
+                if (fila >= 0 && columna >= 2) {
+                    try {
+
+                        YearMonth periodo = controlador.obtenerUltimoPeriodo();
+                        if (periodo != null) {
+                            Informe ventanaInforme = new Informe();
+
+                            ventanaInforme.generarYMostrarInforme(periodo);
+                            ventanaInforme.setVisible(true);
+                            ventanaInforme.setLocationRelativeTo(null);
+
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No hay un período válido seleccionado.");
+                        }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Error al abrir el informe: " + ex.getMessage());
+                    }
+                }
+            }
+        });
 
     }
 
@@ -42,18 +71,18 @@ public class Pantalla_Muestra extends javax.swing.JFrame {
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Ingreso", "Gasto", "Balance", "Ahorro", "Gasto Promedio", "Variacion Mensual"
+                "Ingreso", "Gasto", "Balance", "Ahorro", "Informe"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -103,17 +132,17 @@ public class Pantalla_Muestra extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(Cargar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Salir)
-                        .addGap(15, 15, 15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addGap(37, 37, 37)
+                        .addComponent(Cargar)
+                        .addGap(29, 29, 29)
+                        .addComponent(Salir)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
@@ -127,131 +156,80 @@ public class Pantalla_Muestra extends javax.swing.JFrame {
         try {
 
             StringBuilder informe = new StringBuilder();
-
-            informe.append(
-                    controlador.obtenerResumenFinanciero()
-            );
-
+            informe.append(controlador.obtenerResumenFinanciero());
             informe.append("\n\n");
 
             boolean entrenado = controlador.entrenarModelo();
 
             if (entrenado) {
-
-                informe.append(
-                        "===== MODELO SOM =====\n\n"
-                );
-
-                informe.append(
-                        controlador.evaluarModelo()
-                );
-
+                informe.append("===== MODELO SOM =====\n\n");
+                informe.append(controlador.evaluarModelo());
                 informe.append("\n");
-
-                informe.append(
-                        controlador.obtenerPerfilesFinancieros()
-                );
-
-                YearMonth periodo
-                        = controlador.obtenerUltimoPeriodo();
+                informe.append(controlador.obtenerPerfilesFinancieros());
+                YearMonth periodo = controlador.obtenerUltimoPeriodo();
 
                 if (periodo != null) {
-
                     informe.append("\n===== ANÁLISIS DEL ÚLTIMO MES =====\n\n");
-
-                    informe.append(
-                            controlador.analizarMes(periodo)
-                    );
-
+                    informe.append(controlador.analizarMes(periodo));
                     informe.append("\n===== RECOMENDACIONES =====\n\n");
 
-                    informe.append(
-                            controlador.obtenerRecomendaciones(periodo)
-                    );
+                    java.util.List<String> recomendaciones = controlador.obtenerRecomendaciones(periodo);
 
+                    if (recomendaciones == null || recomendaciones.isEmpty()) {
+                        informe.append("No hay recomendaciones disponibles.\n");
+                    } else {
+                        for (int i = 0; i < recomendaciones.size(); i++) {
+                            informe.append(i + 1).append(". ").append(recomendaciones.get(i)).append("\n");
+                        }
+                    }
                 }
-
             } else {
-
-                informe.append(
-                        "\nNo hay suficientes datos históricos "
-                        + "para entrenar el modelo SOM."
-                );
+                informe.append("\nNo hay suficientes datos históricos para entrenar el modelo SOM.");
             }
 
             try {
-
-                double ingresos
-                        = controlador.proyectarIngresos(3);
-
-                double gastos
-                        = controlador.proyectarGastos(3);
+                double ingresos = controlador.proyectarIngresos(3);
+                double gastos = controlador.proyectarGastos(3);
 
                 informe.append("\n\n===== PROYECCIÓN FINANCIERA =====\n\n");
-
-                informe.append(
-                        String.format(
-                                "Ingresos estimados: $%.2f%n",
-                                ingresos
-                        )
-                );
-
-                informe.append(
-                        String.format(
-                                "Gastos estimados: $%.2f%n",
-                                gastos
-                        )
-                );
-
-                informe.append(
-                        String.format(
-                                "Balance estimado: $%.2f%n",
-                                ingresos - gastos
-                        )
-                );
+                informe.append(String.format("Ingresos estimados: $%.2f%n", ingresos));
+                informe.append(String.format("Gastos estimados: $%.2f%n", gastos));
+                informe.append(String.format("Balance estimado: $%.2f%n", ingresos - gastos));
 
             } catch (IllegalArgumentException ex) {
-
-                informe.append(
-                        "\nNo fue posible realizar la proyección: "
-                        + ex.getMessage()
-                );
+                informe.append("\nNo fue posible realizar la proyección: " + ex.getMessage());
             }
 
             jTextArea1.setText(informe.toString());
-
             jTextArea1.setCaretPosition(0);
 
-            DefaultTableModel modelo
-                    = (DefaultTableModel) tabla.getModel();
+            double totalIngresos = controlador.obtenerTotalIngresos();
+            double totalGastos = controlador.obtenerTotalGastos();
+            double balance = totalIngresos - totalGastos;
+            double porcentajeAhorro = (totalIngresos > 0) ? (balance / totalIngresos) * 100 : 0;
 
+            if (analisisGastos == null) {
+                analisisGastos = new Analisis_Gastos();
+            }
+
+            Guardado guardarRespaldo = new Guardado();
+            guardarRespaldo.Guardado_Local_IA("Informe_Financiero", informe.toString());
+            guardarRespaldo.SQLIA("Informe_Financiero", informe.toString());
+            guardarRespaldo.SQLResumen(analisisGastos);
+
+            DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
             modelo.setRowCount(0);
 
             modelo.addRow(new Object[]{
-                String.format(
-                "%.2f",
-                controlador.obtenerTotalIngresos()
-                ),
-                String.format(
-                "%.2f",
-                controlador.obtenerTotalGastos()
-                ),
-                "Ver informe",
-                "Ver informe",
-                "Ver informe",
+                String.format("%.2f", totalIngresos),
+                String.format("%.2f", totalGastos),
+                String.format("%.2f", balance),
+                String.format("%.2f%%", porcentajeAhorro),
                 "Ver informe"
             });
 
         } catch (Exception ex) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error al cargar los resultados:\n"
-                    + ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-
+            JOptionPane.showMessageDialog(this, "Error al cargar los resultados:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }//GEN-LAST:event_CargarActionPerformed

@@ -2,10 +2,11 @@ package prototipo.Servicio;
 
 import META_INF.Conector_JBDC;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import org.json.JSONArray;
@@ -25,7 +26,7 @@ public class Guardado {
     public void SQLIngreso(Ingreso i) {
         try {
 
-            String sql = ("INSERT INTO ingresos (Fecha, monto,tipo,descripcion,periocidad) VALUES (?,?,?,?,?)");
+            String sql = "INSERT INTO ingresos (Fecha, monto, tipo, descripcion, periocidad, TagSesion) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setDate(1, i.getFecha());
@@ -33,6 +34,7 @@ public class Guardado {
             ps.setString(3, i.getTipo());
             ps.setString(4, i.getDescripcion());
             ps.setString(5, i.getPeriocidad());
+            ps.setInt(6, SesionActual.getTagSesion());
 
             ps.executeUpdate();
             ps.close();
@@ -45,7 +47,7 @@ public class Guardado {
     public void SQLGasto(Gasto g) {
         try {
 
-            String sql = ("INSERT INTO registro_de_gastos (Fecha, monto,categoria,descripcion,medio_de_pago) VALUES (?,?,?,?,?)");
+            String sql = "INSERT INTO registro_de_gastos (Fecha, monto, categoria, descripcion, medio_de_pago, TagSesion) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setDate(1, g.getFecha());
@@ -53,6 +55,7 @@ public class Guardado {
             ps.setString(3, g.getCategoria());
             ps.setString(4, g.getDescripcion());
             ps.setString(5, g.getMedio_Pago());
+            ps.setInt(6, SesionActual.getTagSesion());
 
             ps.executeUpdate();
             ps.close();
@@ -65,12 +68,13 @@ public class Guardado {
     public void SQLDeuda(Deuda d) {
         try {
 
-            String sql = ("INSERT INTO deuda (monto_inicial,cuota,vencimiento) VALUES (?,?,?)");
+            String sql = "INSERT INTO deuda (monto_inicial, cuota, vencimiento, TagSesion) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setDouble(1, d.getMonto_inicial());
             ps.setInt(2, d.getCouota());
             ps.setDate(3, d.getVencimiento());
+            ps.setInt(4, SesionActual.getTagSesion());
 
             ps.executeUpdate();
             ps.close();
@@ -98,11 +102,14 @@ public class Guardado {
         JSONArray ja = new JSONArray();
 
         if (archivo.length() > 0 && archivo.exists()) {
-            try (FileReader reader = new FileReader(archivo)) {
-                org.json.JSONTokener t = new org.json.JSONTokener(reader);
-                ja = new JSONArray(t);
-            } catch (IOException ex) {
-                System.out.println("Error al leer " + ex);
+            try {
+                String contenidoEncriptado = new String(Files.readAllBytes(archivo.toPath()));
+                String contenidoPlano = Cifrado.desencriptar(contenidoEncriptado);
+                if (contenidoPlano != null && !contenidoPlano.trim().isEmpty()) {
+                    ja = new JSONArray(contenidoPlano);
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al leer o desencriptar " + ex);
             }
         }
 
@@ -117,8 +124,11 @@ public class Guardado {
 
         ja.put(j);
 
+        String jsonTextoPlano = ja.toString(4);
+        String jsonEncriptado = Cifrado.encriptar(jsonTextoPlano);
+
         try (FileWriter file = new FileWriter(archivo)) {
-            file.write(ja.toString(4));
+            file.write(jsonEncriptado);
             file.flush();
         } catch (IOException ex) {
             System.out.println("Error en al guardar el JSON");
@@ -144,11 +154,14 @@ public class Guardado {
         JSONArray ja = new JSONArray();
 
         if (archivo.length() > 0 && archivo.exists()) {
-            try (FileReader reader = new FileReader(archivo)) {
-                org.json.JSONTokener t = new org.json.JSONTokener(reader);
-                ja = new JSONArray(t);
-            } catch (IOException ex) {
-                System.out.println("Error al leer " + ex);
+            try {
+                String contenidoEncriptado = new String(Files.readAllBytes(archivo.toPath()));
+                String contenidoPlano = Cifrado.desencriptar(contenidoEncriptado);
+                if (contenidoPlano != null && !contenidoPlano.trim().isEmpty()) {
+                    ja = new JSONArray(contenidoPlano);
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al leer o desencriptar " + ex);
             }
         }
 
@@ -163,12 +176,15 @@ public class Guardado {
 
         ja.put(j);
 
+        String jsonTextoPlano = ja.toString(4);
+        String jsonEncriptado = Cifrado.encriptar(jsonTextoPlano);
+
         try (FileWriter file = new FileWriter(archivo)) {
-            file.write(ja.toString(4));
+            file.write(jsonEncriptado);
             file.flush();
         } catch (IOException ex) {
             System.out.println("Error en al guardar el JSON");
-            System.out.println("Error s1-004 - Local Gasto " + ex);
+            System.out.println("Error s1-005 - Local Gasto " + ex);
         }
     }
 
@@ -190,11 +206,14 @@ public class Guardado {
         JSONArray ja = new JSONArray();
 
         if (archivo.length() > 0 && archivo.exists()) {
-            try (FileReader reader = new FileReader(archivo)) {
-                org.json.JSONTokener t = new org.json.JSONTokener(reader);
-                ja = new JSONArray(t);
-            } catch (IOException ex) {
-                System.out.println("Error al leer " + ex);
+            try {
+                String contenidoEncriptado = new String(Files.readAllBytes(archivo.toPath()));
+                String contenidoPlano = Cifrado.desencriptar(contenidoEncriptado);
+                if (contenidoPlano != null && !contenidoPlano.trim().isEmpty()) {
+                    ja = new JSONArray(contenidoPlano);
+                }
+            } catch (Exception ex) {
+                System.out.println("Error al leer o desencriptar " + ex);
             }
         }
 
@@ -207,34 +226,93 @@ public class Guardado {
 
         ja.put(j);
 
+        String jsonTextoPlano = ja.toString(4);
+        String jsonEncriptado = Cifrado.encriptar(jsonTextoPlano);
+
         try (FileWriter file = new FileWriter(archivo)) {
-            file.write(ja.toString(4));
+            file.write(jsonEncriptado);
             file.flush();
         } catch (IOException ex) {
             System.out.println("Error en al guardar el JSON");
-            System.out.println("Error s1-004 - Local Deuda " + ex);
+            System.out.println("Error s1-006 - Local Deuda " + ex);
         }
     }
 
     public void SQLResumen(Analisis_Gastos ag) {
+        if (ag == null) {
+            System.out.println("Error s1-007: El objeto Analisis_Gastos es nulo.");
+            return;
+        }
+
+        String sql = "INSERT INTO analisis_de_gastos (Ingresos, Gastos, Balance, Ahorro, Gasto_Promedio, Variacion_Mensual, TagSesion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = Conector_JBDC.conectar()) {
+            if (conn == null) {
+                System.out.println("Error s1-007: No se pudo conectar a la base de datos.");
+                return;
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setDouble(1, ag.calcularTotalIngresos());
+                ps.setDouble(2, ag.calcularTotalGastos());
+                ps.setDouble(3, ag.calcularBalance());
+                ps.setDouble(4, ag.calcularPorcentajeAhorro());
+                ps.setDouble(5, ag.calcularGastoPromedio());
+                ps.setDouble(6, ag.calcularVariacionMensual());
+                ps.setInt(7, SesionActual.getTagSesion());
+
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            System.out.println("Error s1-007 - SQL Resumen: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void Guardado_Local_IA(String tipoAnalisis, String contenidoResultado) {
+        String carpeta = "Datos_IA_Respaldo";
+        String ruta = carpeta + File.separator + LocalDate.now() + "_" + tipoAnalisis + ".json";
+
+        File directorio = new File(carpeta);
+        File archivo = new File(ruta);
+
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+
+        JSONObject j = new JSONObject();
+        j.put("Fecha_Generacion", LocalDate.now().toString());
+        j.put("Tipo", tipoAnalisis);
+        j.put("Resultado", contenidoResultado);
+
+        String jsonTextoPlano = j.toString(4);
+        String jsonEncriptado = Cifrado.encriptar(jsonTextoPlano);
+
+        try (FileWriter file = new FileWriter(archivo)) {
+            file.write(jsonEncriptado);
+            file.flush();
+        } catch (IOException ex) {
+            System.out.println("Error s1-008 - Local IA " + ex);
+        }
+    }
+
+    public void SQLIA(String tipoAnalisis, String contenidoResultado) {
         try {
 
-            String sql = ("INSERT INTO analisis_de_gastos (Ingresos,Gastos,Balance,Ahorro,Gasto_Promedio,Variacion_Mensual) VALUES (?,?,?,?,?,?)");
+            String sql = ("INSERT INTO resultados_ia (Fecha_Generacion, Tipo,Resultado, TagSesion) VALUES (?,?,?,?)");
             PreparedStatement ps = conn.prepareStatement(sql);
 
-            ps.setDouble(1, ag.calcularTotalIngresos());
-            ps.setDouble(2, ag.calcularTotalGastos());
-            ps.setDouble(3, ag.calcularBalance());
-            ps.setDouble(4, ag.calcularPorcentajeAhorro());
-            ps.setDouble(5, ag.calcularGastoPromedio());
-            ps.setDouble(6, ag.calcularVariacionMensual());
+            ps.setDate(1, Date.valueOf(LocalDate.now()));
+            ps.setString(2, tipoAnalisis);
+            ps.setString(3, contenidoResultado);
+            ps.setInt(4, SesionActual.getTagSesion());
 
             ps.executeUpdate();
             ps.close();
 
         } catch (Exception ex) {
-            System.out.println("Error s1-003 - SQL Deuda " + ex);
+            System.out.println("Error s1-009 - SQL Deuda " + ex);
         }
     }
-
 }

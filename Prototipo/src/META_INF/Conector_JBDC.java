@@ -14,7 +14,7 @@ public class Conector_JBDC {
         Connection con = null;
         try {
             con = DriverManager.getConnection(url, user, pass);
-            //System.out.println("Conectado");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

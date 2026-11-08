@@ -1,8 +1,16 @@
 package prototipo.panel;
 
+import java.time.YearMonth;
+import prototipo.Servicio.Controlador;
+
 public class Informe extends javax.swing.JFrame {
 
+    private Controlador controlador;
+    
     public Informe() {
+        
+        controlador = new Controlador();
+        
         initComponents();
     }
 
@@ -33,12 +41,12 @@ public class Informe extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Salir, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(119, 119, 119))
+                .addGap(294, 294, 294))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -57,6 +65,26 @@ public class Informe extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_SalirActionPerformed
 
+    public void generarYMostrarInforme(YearMonth periodo) {
+
+    String contenido = controlador.generarInforme(periodo);
+
+    jTextArea1.setText(contenido);
+    jTextArea1.setCaretPosition(0);
+}
+    
+    public void mostrarInforme(String contenido) {
+
+    if (contenido == null || contenido.trim().isEmpty()) {
+
+        jTextArea1.setText("No hay información disponible para generar el informe.");
+
+        return;
+    }
+
+    jTextArea1.setText(contenido);
+    jTextArea1.setCaretPosition(0);
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Salir;

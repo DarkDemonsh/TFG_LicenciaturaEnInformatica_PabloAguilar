@@ -79,17 +79,13 @@ public class Controlador {
 
     public String obtenerResumenFinanciero() {
 
-        double ingresos
-                = analisisGastos.calcularTotalIngresos();
+        double ingresos = analisisGastos.calcularTotalIngresos();
 
-        double gastos
-                = analisisGastos.calcularTotalGastos();
+        double gastos = analisisGastos.calcularTotalGastos();
 
-        double balance
-                = analisisGastos.calcularBalance();
+        double balance = analisisGastos.calcularBalance();
 
-        double ahorro
-                = analisisGastos.calcularPorcentajeAhorro();
+        double ahorro = analisisGastos.calcularPorcentajeAhorro();
 
         StringBuilder resultado = new StringBuilder();
 
@@ -313,5 +309,55 @@ public class Controlador {
     public double obtenerTotalGastos() {
         return analisisGastos.calcularTotalGastos();
     }
+    
+    public String generarInforme(YearMonth periodo) {
 
+    if (periodo == null) {
+        return "No se puede generar el informe. " + "Debe seleccionar un período válido.";
+    }
+
+    StringBuilder informe = new StringBuilder();
+
+    informe.append("====================================\n");
+    informe.append("         INFORME FINANCIERO         \n");
+    informe.append("====================================\n\n");
+
+    informe.append("PERÍODO ANALIZADO\n");
+    informe.append("------------------------------------\n");
+    informe.append(periodo.toString()).append("\n\n");
+
+    informe.append(obtenerResumenFinanciero());
+    informe.append("\n");
+
+    informe.append(analizarMes(periodo));
+    informe.append("\n");
+
+    informe.append("RECOMENDACIONES\n");
+    informe.append("------------------------------------\n");
+
+    List<String> recomendaciones =
+            obtenerRecomendaciones(periodo);
+
+    if (recomendaciones == null || recomendaciones.isEmpty()) {
+
+        informe.append("No hay recomendaciones disponibles.\n");
+
+    } else {
+
+        for (int i = 0; i < recomendaciones.size(); i++) {
+
+            informe.append(i + 1)
+                    .append(". ")
+                    .append(recomendaciones.get(i))
+                    .append("\n");
+        }
+    }
+
+    informe.append("\n====================================\n");
+    informe.append("          FIN DEL INFORME           \n");
+    informe.append("====================================\n");
+
+    return informe.toString();
+}
+    
 }
