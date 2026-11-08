@@ -40,7 +40,7 @@ public class DatosSOM {
 
         List<Ingreso> ingresos = gestor.obtenerIngresos();
         List<Gasto> gastos = gestor.obtenerGastos();
-
+        
         for (Ingreso ingreso : ingresos) {
 
             if (ingreso.getFecha() == null) {
@@ -169,6 +169,7 @@ public class DatosSOM {
     private boolean discrecional(String categoria) {
 
         return categoria.equals("entretenimiento")
+                || categoria.equals("otros")
                 || categoria.equals("indumentaria");
     }
 

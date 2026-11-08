@@ -149,7 +149,7 @@ public class Pantalla_Ingreso_Datos extends javax.swing.JFrame {
             }
         });
 
-        categoria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Supermercado", "Entretenimiento", "Salud", "Hogar", "Transporte", "Indumentaria", "Retiro de Efectivo", "Educacion", " ", " " }));
+        categoria.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Supermercado", "Entretenimiento", "Salud", "Hogar", "Transporte", "Indumentaria", "Retiro de Efectivo", "Educacion", "Otros", " " }));
         categoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 categoriaActionPerformed(evt);
